@@ -1,6 +1,7 @@
 # Dashboard GeoRide
 
-Une interface qui permet de verrouiller et déverrouiller un tracker, de voir les trajets et autres infos dispo depuis l'API https://api.georide.fr
+Une interface qui permet de verrouiller et déverrouiller un tracker, de voir les trajets et autres infos dispo depuis l'API https://api.georide.fr.
+Nécessite l'installation de NodeJS (version > 6)
 
 ## Installation 
 
