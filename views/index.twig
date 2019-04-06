@@ -1,0 +1,33 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <h1>{{title}}</h1>
+  <p>Welcome to {{title}}</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>email</th>
+        <th>firstName</th>
+        <th>phoneNumber</th>
+        <th>dateOfBirth</th>
+        <th>pushUserToken</th>
+        <th>authToken</th>
+        <th>createdAt</th>
+        <th>legal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <td>{{user.id}}</td>
+      <td>{{user.email}}</td>
+      <td>{{user.firstName}}</td>
+      <td>{{user.phoneNumber}}</td>
+      <td>{{user.dateOfBirth}}</td>
+      <td>{{user.pushUserToken}}</td>
+      <td>{{user.authToken}}</td>
+      <td>{{user.createdAt}}</td>
+      <td>{{user.legal}}</td>
+    </tbody>
+  </table>
+{% endblock %}

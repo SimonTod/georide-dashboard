@@ -1,0 +1,97 @@
+{% extends 'dashboard.layout.twig' %}
+{% block style %}
+<style>
+  /* Always set the map height explicitly to define the size of the div
+   * element that contains the map. */
+  #map {
+    height: 425px;
+  }
+  /* Optional: Makes the sample page fill the window. */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+{% endblock %}
+{% block body %}
+<!-- Default box -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{start.fixtime|date("d/m/Y")}} - {{start.fixtime|date("H:i")}}</h3>
+
+        <div class="card-tools">
+          <button type="button" class="btn btn-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+            <i class="fa fa-minus"></i></button>
+          <button type="button" class="btn btn-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+            <i class="fa fa-times"></i></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="map" class=""></div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        Footer
+      </div>
+      <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+{% endblock %}
+{% block script %}
+<script src="/lodash/lodash.js" charset="utf-8"></script>
+<script>
+  var map,markers=[];
+
+
+  function addMarker(latitude,longitude,trackerName){
+
+    let marker = new google.maps.Marker({
+      position: {lat:_.toNumber(latitude),lng:_.toNumber(longitude)},
+      map: map,
+      title: trackerName
+    });
+    markers.push(marker);
+    return marker
+  }
+  function initMap() {
+    var trajetPlanCoordinates = []
+    var zoneMarqueurs = new google.maps.LatLngBounds();
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 48.8552236, lng: 2.3202793},
+      zoom: 12
+    });
+
+    zoneMarqueurs.extend(addMarker('{{start.latitude}}', '{{start.longitude}}','Départ').getPosition());
+    zoneMarqueurs.extend(addMarker('{{end.latitude}}', '{{end.longitude}}','Arrivé').getPosition());
+
+    {% for position in positions %}
+      trajetLat = _.toNumber('{{position.latitude}}')
+      trajetLng = _.toNumber('{{position.longitude}}')
+      trajetPlanCoordinates.push({lat:trajetLat, lng: trajetLng})
+      var point = new google.maps.LatLng(trajetLat, trajetLng);
+      zoneMarqueurs.extend(point);
+    {% endfor %}
+    var trajetPath = new google.maps.Polyline({
+      path: trajetPlanCoordinates,
+      geodesic: true,
+      strokeColor: '#FF0000',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+
+    trajetPath.setMap(map);
+
+
+
+    map.fitBounds(zoneMarqueurs);
+    var listener = google.maps.event.addListener(map, "idle", function() {
+      if (map.getZoom() > 15) map.setZoom(15);
+      google.maps.event.removeListener(listener);
+    });
+
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClR6qsi7Vas_kzz3drLKNvd45OBmKs9oI&callback=initMap"
+async defer></script>
+{% endblock %}

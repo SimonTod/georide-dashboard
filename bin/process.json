@@ -1,0 +1,6 @@
+{
+  "script": "bin/www",
+  "watch": true,
+  "ignore_watch" : ["uploads/",".git/","session/","sessions/"],
+  "name": "Georide"
+}

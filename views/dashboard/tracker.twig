@@ -1,0 +1,235 @@
+{% extends 'dashboard.layout.twig' %}
+{% block style %}
+<style>
+  /* Always set the map height explicitly to define the size of the div
+   * element that contains the map. */
+  #map {
+    height: 425px;
+  }
+  /* Optional: Makes the sample page fill the window. */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+{% endblock %}
+{% block body %}
+<div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3">
+
+          <!-- Profile Image -->
+          <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+              <div class="text-center">
+                <img class="profile-user-img img-fluid img-circle"
+                     src="/images/Logo-GeoRide.png"
+                     alt="User profile picture">
+              </div>
+
+              <h3 class="profile-username text-center">
+                {% if myTracker.isLocked %}
+                  Verrouillé
+                {% else %}
+                  Déverrouillé
+                {% endif %}
+              </h3>
+
+              <p class="text-muted text-center">
+                {{myTracker.status}}
+              </p>
+
+              <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item">
+                  <b>Odometre</b><br>
+                  <a class="float-right">{{myTracker.odometer|number_format(0, ',', ' ') }} km</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Trajets</b><br>
+                  <a class="float-right">{{trips|length}}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Distance totale</b><br>
+                  <a class="float-right">{{myTracker.distance|number_format(0, ',', ' ') }} km</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Vitesse max</b><br>
+                  <a class="float-right">{{myTracker.maxSpeed|number_format(0, ',', ' ') }} km/h</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Vitesse moyenne</b><br>
+                  <a class="float-right">{{myTracker.averageSpeed|number_format(0, ',', ' ') }} km/h</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Durée totale</b><br>
+                  <a class="float-right">{{myTracker.duration}} heures</a>
+                </li>
+
+              </ul>
+              <div class="text-center">
+                {% if myTracker.canLock %}
+                  {% if myTracker.isLocked == false  %}
+                    <a class="btn btn-app center" href="/dashboard/vehicules/{{myTracker.trackerId}}/lock">
+                      <i class="fa fa-lock"></i> Lock
+                    </a>
+                  {% endif %}
+                {% endif %}
+                {% if myTracker.canUnlock %}
+                  {% if myTracker.isLocked %}
+                    <a  class="btn btn-app" href="/dashboard/vehicules/{{myTracker.trackerId}}/unlock">
+                      <i class="fa fa-unlock"></i> Unlock
+                    </a>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header p-2">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" href="#carte" data-toggle="tab">Position</a></li>
+                <li class="nav-item"><a class="nav-link " href="#activity" data-toggle="tab">Trajets</a></li>
+                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Paramètres</a></li>
+              </ul>
+            </div><!-- /.card-header -->
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="tab-pane" id="activity">
+                  {% for trip in trips %}
+                    <!-- Post -->
+                    <div class="post">
+                      <div class="user-block">
+                        <img class="img-circle img-bordered-sm" src="/images/user1-128x128.jpg" alt="user image">
+                        <span class="username">
+                          <a href="/dashboard/vehicules/{{myTracker.trackerId}}/{{trip.startTime}}/{{trip.endTime}}">{{trip.startTime|date("d/m/Y")}} - {{trip.startTime|date("H:i")}}</a>
+                        </span>
+                        <span class="description">
+                          {{trip.niceStartAddress}}
+                           -
+                          {{trip.niceEndAddress}}
+                        </span>
+                      </div>
+                      <!-- /.user-block -->
+                      <p>
+                        De : {{trip.startAddress}}<br>
+                        À : {{trip.endAddress}}
+                      </p>
+                      <p>
+                        <i class="fa fa-road" aria-hidden="true"></i> {{trip.distance|number_format(0, ',', ' ')}} km / <i class="fa fa-clock-o" aria-hidden="true"></i> {{trip.duration}} mins / <i class="ion ion-ios-stopwatch-outline"></i> {{trip.averageSpeed}} km/h / <i class="ion ion-speedometer"></i> {{trip.maxSpeed}} km/h
+                      </p>
+
+                    </div>
+                    <!-- /.post -->
+                  {% endfor %}
+
+                </div>
+                <!-- /.tab-pane -->
+                <div class="active tab-pane" id="carte">
+                  <div id="map" class=""></div>
+                </div>
+                <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="settings">
+                  <form class="form-horizontal">
+                    <div class="form-group">
+                      <label>Peut voir la position</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canSeePosition %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                    <div class="form-group">
+                      <label>Peut verrouiller</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canLock %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                    <div class="form-group">
+                      <label>Peut déverrouiller</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canUnlock %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                    <div class="form-group">
+                      <label>Peut partager</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canShare %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                    <div class="form-group">
+                      <label>Peut supprimer un partage</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canUnshare %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                    <div class="form-group">
+                      <label>Peut voir la vitesse</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canCheckSpeed %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                    <div class="form-group">
+                      <label>Peut voir les statistiques</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canSeeStatistics %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                    <div class="form-group">
+                      <label>canSendBrokenDownSignal</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canSendBrokenDownSignal %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                    <div class="form-group">
+                      <label>Peut déclarer volé</label>
+                      <input type="text" class="form-control" value="{% if myTracker.canSendStolenSignal %}Oui{% else %}Non{% endif %}" disabled="">
+                    </div>
+                  </form>
+                </div>
+                <!-- /.tab-pane -->
+              </div>
+              <!-- /.tab-content -->
+            </div><!-- /.card-body -->
+          </div>
+          <!-- /.nav-tabs-custom -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+{% endblock %}
+{% block script %}
+<script src="/lodash/lodash.js" charset="utf-8"></script>
+<script>
+  var map,markers=[];
+
+
+  function addMarker(latitude,longitude,trackerName){
+
+    let marker = new google.maps.Marker({
+      position: {lat:_.toNumber(latitude),lng:_.toNumber(longitude)},
+      map: map,
+      title: trackerName
+    });
+    var cityCircle = new google.maps.Circle({
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 0,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            map: map,
+            center: marker.getPosition(),
+            radius: 200
+          });
+    markers.push(marker);
+    return marker
+  }
+  function initMap() {
+    var zoneMarqueurs = new google.maps.LatLngBounds();
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 48.8552236, lng: 2.3202793},
+      zoom: 12
+    });
+
+      zoneMarqueurs.extend(addMarker('{{myTracker.latitude}}', '{{myTracker.longitude}}','{{myTracker.trackerName}}').getPosition());
+
+    map.fitBounds(zoneMarqueurs);
+    var listener = google.maps.event.addListener(map, "idle", function() {
+      if (map.getZoom() > 15) map.setZoom(15);
+      google.maps.event.removeListener(listener);
+    });
+
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClR6qsi7Vas_kzz3drLKNvd45OBmKs9oI&callback=initMap"
+async defer></script>
+{% endblock %}
