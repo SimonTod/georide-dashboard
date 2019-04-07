@@ -19,7 +19,11 @@
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">{{start.fixtime|date("d/m/Y")}} - {{start.fixtime|date("H:i")}}</h3>
-
+        <span class="description">
+          {{trip.niceStartAddress}}
+           -
+          {{trip.niceEndAddress}}
+        </span>
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
             <i class="fa fa-minus"></i></button>
@@ -32,7 +36,13 @@
       </div>
       <!-- /.card-body -->
       <div class="card-footer">
-        Footer
+        <p>
+          De : {{trip.startAddress}}<br>
+          À : {{trip.endAddress}}
+        </p>
+        <p>
+          <i class="fa fa-road" aria-hidden="true"></i> {{trip.distance|number_format(0, ',', ' ')}} km / <i class="fa fa-clock-o" aria-hidden="true"></i> {{trip.duration}} mins / <i class="ion ion-ios-stopwatch-outline"></i> {{trip.averageSpeed}} km/h / <i class="ion ion-speedometer"></i> {{trip.maxSpeed}} km/h
+        </p>
       </div>
       <!-- /.card-footer-->
     </div>

@@ -94,11 +94,25 @@ module.exports = {
     var from = req.params.from
     var to = req.params.to
 
+    trip = await api.getTrips(user,trakerId,from,to)
+    trip = trip[0]
+    trip.distance = trip.distance/1000
+    var tempTime = moment.duration(trip.duration);
+    trip.duration = tempTime.minutes()
+    if (trip.startAddress) {
+      splitAddress = _.split(trip.startAddress, ',');
+      trip.startAddress = splitAddress[1]
+    }
+    if (trip.endAddress) {
+      splitAddress = _.split(trip.endAddress, ',');
+      trip.endAddress = splitAddress[1]
+    }
+
     positions = await api.getPositions(user,trakerId,from,to)
     start = positions[0]
     end = positions[positions.length-1]
 
-    res.render('dashboard/trajet', { title: 'Dashboard - Home',link:"dashboard",sublink:"vehicules",positions,user,end,start });
+    res.render('dashboard/trajet', { title: 'Dashboard - Home',link:"dashboard",sublink:"vehicules",positions,user,end,start,trip });
   },
   lock: async function(req, res){
     user = req.session.user
