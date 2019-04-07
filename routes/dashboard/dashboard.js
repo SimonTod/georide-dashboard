@@ -46,15 +46,7 @@ module.exports = {
 
     trips = await api.getTrips(user,trakerId,user.createdAt,moment().toDate().toJSON())
 
-    trackers = await api.getTrackers(user);
-
-    _.forEach(trackers, function(tracker) {
-      if (tracker.trackerId == trakerId) {
-        myTracker = tracker
-      }
-    });
-
-    console.log(myTracker);
+    myTracker = await api.getTrackerInfo(user,trakerId);
 
     myTracker.distance = 0
     myTracker.maxSpeed = 0

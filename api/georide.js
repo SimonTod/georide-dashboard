@@ -1,4 +1,5 @@
 const axios = require('axios')
+const _ = require('lodash')
 const querystring = require('querystring');
 const config = require('../config')
 
@@ -81,6 +82,32 @@ module.exports = {
       trackers = 'KO'
     });
     return trackers
+  },
+  getTrackerInfo: async function(user,trackerId){
+    const headers =
+    {
+      headers: {
+        'Authorization': 'Bearer '+user.authToken
+      }
+    }
+    await axios.get(config.api_url+'/user/trackers/',headers)
+    .then(function (response) {
+      trackers = response.data
+    })
+    .catch(function (error) {
+      trackers = 'KO'
+    });
+    if (trackers != 'KO') {
+      _.forEach(trackers, function(tracker) {
+        if (tracker.trackerId == trackerId) {
+          myTracker = tracker
+        }
+      });
+    }else {
+      myTracker = trackers
+    }
+
+    return myTracker
   },
   getTrips: async function(user,trakerId,from,to){
     const headers =
