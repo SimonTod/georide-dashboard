@@ -121,7 +121,7 @@
                         À : {{trip.endAddress}}
                       </p>
                       <p>
-                        <i class="fa fa-road" aria-hidden="true"></i> {{trip.distance|number_format(0, ',', ' ')}} km / <i class="fa fa-clock-o" aria-hidden="true"></i> {{trip.duration}} mins / <i class="ion ion-ios-stopwatch-outline"></i> {{trip.averageSpeed}} km/h / <i class="ion ion-speedometer"></i> {{trip.maxSpeed}} km/h
+                        <i class="fa fa-road" aria-hidden="true"></i> {{trip.distance|number_format(0, ',', ' ')}} km / <i class="fa fa-clock-o" aria-hidden="true"></i> {{trip.duration}} mins / <i class="ion ion-ios-stopwatch-outline"></i> {{trip.averageSpeed|number_format(0, ',', ' ')}} km/h / <i class="ion ion-speedometer"></i> {{trip.maxSpeed|number_format(0, ',', ' ')}} km/h
                       </p>
 
                     </div>

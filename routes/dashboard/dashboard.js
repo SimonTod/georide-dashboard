@@ -54,6 +54,8 @@ module.exports = {
     myTracker.duration = 0
     trips = _.reverse(trips)
     _.forEach(trips, function(trip,key) {
+      trip.maxSpeed = trip.maxSpeed*1.852
+      trip.averageSpeed =  trip.averageSpeed*1.852
       if (trip.maxSpeed > myTracker.maxSpeed) {
         myTracker.maxSpeed = trip.maxSpeed
       }
@@ -88,6 +90,8 @@ module.exports = {
 
     trip = await api.getTrips(user,trakerId,from,to)
     trip = trip[0]
+    trip.maxSpeed = trip.maxSpeed*1.852
+    trip.averageSpeed = trip.averageSpeed*1.852
     trip.distance = trip.distance/1000
     var tempTime = moment.duration(trip.duration);
     trip.duration = tempTime.minutes()
