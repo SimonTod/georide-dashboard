@@ -7,8 +7,10 @@ Nécessite l'installation de NodeJS (version > 6)
 
 - npm install
 - npm start bin/www
+- http://localhost:3400
 
 ## Utilisation de PM2
 
 - npm install
 - pm2 start bin/process.json
+- http://localhost:3400
