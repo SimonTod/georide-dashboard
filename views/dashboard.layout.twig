@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Georide | Dashboard</title>
+  <link rel="shortcut icon" href="/images/Logo-GeoRide.png">
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -154,6 +155,7 @@
 <script src="/socket/socket.io.js"></script>
 <script src="/push.js/push.js"></script>
 <script type="text/javascript">
+
   function notification(title,msg,icon,timeout){
     Push.create(title, {
       body: msg,
@@ -175,11 +177,40 @@
       }
     }
   })
-  // socket.on('connect', () => {
-  //   console.log('connected'); // false
-  //   console.log(socket.id);
-  // });
+
+  //event: tells you authentication informations.
+  socket.on('message', (message) => {
+  	console.log('Message')
+  	console.log(message)
+  })
+
+  //event: tells you when a device is added to the account.
+  socket.on('device', (device) => {
+  	console.log('Device')
+  	console.log(device)
+  })
+
+  //event: tells you when a device sent a position.
+  socket.on('position', (position) => {
+  	console.log('Position')
+  	console.log(position)
+  })
+
+  //event: tells you when a device trigger an alarm.
+  socket.on('alarm', (alarm) => {
+  	console.log('Alarm')
+  	console.log(alarm)
+  })
+
+  //event: tells you when you need to refresh your list of trackers
+  socket.on('refreshTrackersInstruction', (data) => {
+  	console.log('RefreshTrackersInstruction')
+  	console.log(data)
+  })
+
+  //event: tells you when a device has been locked or unlocked.
   socket.on('lockedPosition', (data) => {
+    console.log('LockedPosition');
     console.log(data);
     msg = data.isLocked ? 'Verrouillé':'Déverrouillé'
     notification(data.trackerName,msg,'/images/Logo-GeoRide.png',0)
