@@ -34,15 +34,19 @@
         </div>
         <!-- /.card-body -->
         <div class="card-footer text-center">
-          {% if tracker.isLocked == false  %}
-            <a class="btn btn-app center" href="/dashboard/vehicules/{{tracker.trackerId}}/lock">
-              <i class="fa fa-lock"></i> Lock
-            </a>
+          {% if tracker.canLock %}
+            {% if tracker.isLocked == false  %}
+              <a class="btn btn-app center" href="/dashboard/vehicules/{{tracker.trackerId}}/lock">
+                <i class="fa fa-lock"></i> Lock
+              </a>
+            {% endif %}
           {% endif %}
-          {% if tracker.isLocked %}
-            <a  class="btn btn-app" href="/dashboard/vehicules/{{tracker.trackerId}}/unlock">
-              <i class="fa fa-unlock"></i> Unlock
-            </a>
+          {% if tracker.canUnlock %}
+            {% if tracker.isLocked %}
+              <a  class="btn btn-app" href="/dashboard/vehicules/{{tracker.trackerId}}/unlock">
+                <i class="fa fa-unlock"></i> Unlock
+              </a>
+            {% endif %}
           {% endif %}
         </div>
         <!-- /.card-footer-->

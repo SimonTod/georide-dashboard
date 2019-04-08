@@ -39,7 +39,7 @@
               <p class="text-muted text-center">
                 {{myTracker.status}}
               </p>
-
+              {% if myTracker.canSeeStatistics %}
               <ul class="list-group list-group-unbordered mb-3">
                 <li class="list-group-item">
                   <b>Odometre</b><br>
@@ -67,6 +67,7 @@
                 </li>
 
               </ul>
+              {% endif %}
               <div class="text-center">
                 {% if myTracker.canLock %}
                   {% if myTracker.isLocked == false  %}
@@ -166,7 +167,7 @@
                       <input type="text" class="form-control" value="{% if myTracker.canSeeStatistics %}Oui{% else %}Non{% endif %}" disabled="">
                     </div>
                     <div class="form-group">
-                      <label>canSendBrokenDownSignal</label>
+                      <label>Peut envoyer un signal de détresse pour une panne</label>
                       <input type="text" class="form-control" value="{% if myTracker.canSendBrokenDownSignal %}Oui{% else %}Non{% endif %}" disabled="">
                     </div>
                     <div class="form-group">
@@ -193,23 +194,25 @@
   var map,markers=[];
 
 
-  function addMarker(latitude,longitude,trackerName){
+  function addMarker(latitude,longitude,trackerName,isLocked){
 
     let marker = new google.maps.Marker({
       position: {lat:_.toNumber(latitude),lng:_.toNumber(longitude)},
       map: map,
       title: trackerName
     });
-    var cityCircle = new google.maps.Circle({
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 0,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
-            map: map,
-            center: marker.getPosition(),
-            radius: 200
-          });
+    if (isLocked == 'true') {
+      var cityCircle = new google.maps.Circle({
+              strokeColor: '#FF0000',
+              strokeOpacity: 0.8,
+              strokeWeight: 0,
+              fillColor: '#FF0000',
+              fillOpacity: 0.35,
+              map: map,
+              center: marker.getPosition(),
+              radius: 200
+            });
+    }
     markers.push(marker);
     return marker
   }
@@ -219,8 +222,10 @@
       center: {lat: 48.8552236, lng: 2.3202793},
       zoom: 12
     });
+      {% if myTracker.canSeePosition %}
+        zoneMarqueurs.extend(addMarker('{{myTracker.latitude}}', '{{myTracker.longitude}}','{{myTracker.trackerName}}','{{myTracker.isLocked}}').getPosition());
+      {% endif %}
 
-      zoneMarqueurs.extend(addMarker('{{myTracker.latitude}}', '{{myTracker.longitude}}','{{myTracker.trackerName}}').getPosition());
 
     map.fitBounds(zoneMarqueurs);
     var listener = google.maps.event.addListener(map, "idle", function() {

@@ -129,7 +129,9 @@
     });
 
     {% for tracker in trackers %}
-      zoneMarqueurs.extend(addMarker('{{tracker.latitude}}', '{{tracker.longitude}}','{{tracker.trackerName}}').getPosition() );
+      {% if tracker.canSeePosition %}
+        zoneMarqueurs.extend(addMarker('{{tracker.latitude}}', '{{tracker.longitude}}','{{tracker.trackerName}}').getPosition() );
+      {% endif %}
     {% endfor %}
 
     map.fitBounds(zoneMarqueurs);

@@ -44,39 +44,46 @@ module.exports = {
     user = req.session.user
     var trakerId = req.params.id,myTracker,trackerDistance=0
 
-    trips = await api.getTrips(user,trakerId,user.createdAt,moment().toDate().toJSON())
-
     myTracker = await api.getTrackerInfo(user,trakerId);
 
     myTracker.distance = 0
     myTracker.maxSpeed = 0
     myTracker.averageSpeed = 0
     myTracker.duration = 0
-    trips = _.reverse(trips)
-    _.forEach(trips, function(trip,key) {
-      trip.maxSpeed = trip.maxSpeed*1.852
-      trip.averageSpeed =  trip.averageSpeed*1.852
-      if (trip.maxSpeed > myTracker.maxSpeed) {
-        myTracker.maxSpeed = trip.maxSpeed
-      }
-      myTracker.distance += trip.distance
-      myTracker.averageSpeed += trip.averageSpeed
-      myTracker.duration += trip.duration
-      if (trip.startAddress) {
-        splitAddress = _.split(trip.startAddress, ',');
-        trips[key].startAddress = splitAddress[1]
-      }
-      if (trip.endAddress) {
-        splitAddress = _.split(trip.endAddress, ',');
-        trips[key].endAddress = splitAddress[1]
-      }
-      trips[key].distance = trip.distance/1000
-      var tempTime = moment.duration(trip.duration)
-      trips[key].duration = tempTime.minutes()
-    });
+
+    if (myTracker.canSeeStatistics) {
+      trips = await api.getTrips(user,trakerId,myTracker.activationDate,moment().toDate().toJSON())
+
+      trips = _.reverse(trips)
+      _.forEach(trips, function(trip,key) {
+        trip.maxSpeed = trip.maxSpeed*1.852
+        trip.averageSpeed =  trip.averageSpeed*1.852
+        if (trip.maxSpeed > myTracker.maxSpeed) {
+          myTracker.maxSpeed = trip.maxSpeed
+        }
+        myTracker.distance += trip.distance
+        myTracker.averageSpeed += trip.averageSpeed
+        myTracker.duration += trip.duration
+        if (trip.startAddress) {
+          splitAddress = _.split(trip.startAddress, ',');
+          trips[key].startAddress = splitAddress[1]
+        }
+        if (trip.endAddress) {
+          splitAddress = _.split(trip.endAddress, ',');
+          trips[key].endAddress = splitAddress[1]
+        }
+        trips[key].distance = trip.distance/1000
+        var tempTime = moment.duration(trip.duration)
+        trips[key].duration = tempTime.minutes()
+      });
+      myTracker.averageSpeed = myTracker.averageSpeed/trips.length
+    }else {
+      trips = []
+    }
+
     myTracker.distance = myTracker.distance/1000
     myTracker.odometer = myTracker.odometer/1000
-    myTracker.averageSpeed = myTracker.averageSpeed/trips.length
+
     var tempTime = moment.duration(myTracker.duration);
     myTracker.duration = tempTime.hours()
 
