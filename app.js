@@ -9,6 +9,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
 var moment = require('moment');
+var i18next = require('i18next')
+var middleware = require("i18next-express-middleware");
 
 var config = require('./config');
 
@@ -19,6 +21,17 @@ var dashboardRouter = require('./routes/dashboard');
 var app = express();
 
 app.use(helmet());
+
+i18next.use(middleware.LanguageDetector).init({
+  preload: ["en", "fr"],
+});
+
+app.use(
+  middleware.handle(i18next, {
+    // ignoreRoutes: ["/foo"], // or function(req, res, options, i18next) { /* return true to ignore */ }
+    removeLngFromUrl: false
+  })
+);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -55,6 +68,8 @@ app.use('/ionicons', express.static(__dirname + '/node_modules/ionicons/dist/'))
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 app.use('/moment', express.static(__dirname + '/node_modules/moment/'));
 app.use('/lodash', express.static(__dirname + '/node_modules/lodash/'));
+app.use('/socket', express.static(__dirname + '/node_modules/socket.io-client/dist/'));
+app.use('/push.js', express.static(__dirname + '/node_modules/push.js/bin/'));
 
 function isConnected(req, res, next) {
   console.log('/*************************/');

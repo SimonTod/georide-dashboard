@@ -150,7 +150,42 @@
 <script src="/plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="/javascripts/adminlte.js"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<!-- Socket.io -->
+<script src="/socket/socket.io.js"></script>
+<script src="/push.js/push.js"></script>
+<script type="text/javascript">
+  function notification(title,msg,icon,timeout){
+    Push.create(title, {
+      body: msg,
+      icon: icon,
+      timeout: timeout,
+      onClick: function () {
+          window.focus();
+          this.close();
+      }
+    });
+  }
+  const socket = io('https://api.georide.fr/', {
+    reconnection: true,
+    transportOptions: {
+      polling: {
+        extraHeaders: {
+          token: '{{user.authToken}}'
+        }
+      }
+    }
+  })
+  // socket.on('connect', () => {
+  //   console.log('connected'); // false
+  //   console.log(socket.id);
+  // });
+  socket.on('lockedPosition', (data) => {
+    console.log(data);
+    msg = data.isLocked ? 'Verrouillé':'Déverrouillé'
+    notification(data.trackerName,msg,'/images/Logo-GeoRide.png',0)
+  })
+</script>
+<!-- Block Script -->
 {% block script %}{% endblock %}
 <!-- <script src="dist/js/pages/dashboard.js"></script> -->
 <!-- AdminLTE for demo purposes -->

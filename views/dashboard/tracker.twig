@@ -191,17 +191,17 @@
 {% block script %}
 <script src="/lodash/lodash.js" charset="utf-8"></script>
 <script>
-  var map,markers=[];
+  var map,marker,markers=[],lastLat='{{myTracker.latitude}}',lastLng='{{myTracker.longitude}}';
 
 
   function addMarker(latitude,longitude,trackerName,isLocked){
 
-    let marker = new google.maps.Marker({
+    marker = new google.maps.Marker({
       position: {lat:_.toNumber(latitude),lng:_.toNumber(longitude)},
       map: map,
       title: trackerName
     });
-    if (isLocked == 'true') {
+    if (isLocked == 'true' || isLocked == true) {
       var cityCircle = new google.maps.Circle({
               strokeColor: '#FF0000',
               strokeOpacity: 0.8,
@@ -213,8 +213,19 @@
               radius: 200
             });
     }
-    markers.push(marker);
+    marker = {
+      marker:marker,
+      circle:cityCircle
+    }
     return marker
+  }
+  function removeMarker(marker){
+    if (marker.marker) {
+      marker.marker.setMap(null)
+    }
+    if (marker.circle) {
+      marker.circle.setMap(null)
+    }
   }
   function initMap() {
     var zoneMarqueurs = new google.maps.LatLngBounds();
@@ -223,7 +234,8 @@
       zoom: 12
     });
       {% if myTracker.canSeePosition %}
-        zoneMarqueurs.extend(addMarker('{{myTracker.latitude}}', '{{myTracker.longitude}}','{{myTracker.trackerName}}','{{myTracker.isLocked}}').getPosition());
+        marker = addMarker('{{myTracker.latitude}}', '{{myTracker.longitude}}','{{myTracker.trackerName}}','{{myTracker.isLocked}}')
+        zoneMarqueurs.extend(marker.marker.getPosition());
       {% endif %}
 
 
@@ -234,6 +246,14 @@
     });
 
   }
+  socket.on('lockedPosition', (data) => {
+    removeMarker(marker)
+    if (data.isLocked) {
+      addMarker(data.lockedLatitude,data.lockedLongitude,data.trackerName,data.isLocked)
+    }else {
+      addMarker(lastLat,lastLng,data.trackerName,data.isLocked)
+    }
+  })
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClR6qsi7Vas_kzz3drLKNvd45OBmKs9oI&callback=initMap"
 async defer></script>
