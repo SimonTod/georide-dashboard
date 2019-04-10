@@ -118,6 +118,7 @@
                 <li class="nav-item"><a class="nav-link active" href="#carte" data-toggle="tab">Position</a></li>
                 <li class="nav-item"><a class="nav-link " href="#activity" data-toggle="tab">Trajets</a></li>
                 <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Paramètres</a></li>
+                <li class="nav-item"><a class="nav-link" href="#abonnement" data-toggle="tab">Abonnement</a></li>
               </ul>
             </div><!-- /.card-header -->
             <div class="card-body">
@@ -195,6 +196,29 @@
                       <label>Peut déclarer volé</label>
                       <input type="text" class="form-control" value="{% if myTracker.canSendStolenSignal %}Oui{% else %}Non{% endif %}" disabled="">
                     </div>
+                  </form>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="abonnement">
+                  <form class="form-horizontal">
+                    {% if myTracker.activationDate != null %}
+                    <div class="form-group">
+                      <label>Date d'activation de l'abonnement</label>
+                      <input type="text" class="form-control" value="{{myTracker.activationDate|date('d/m/Y H:i')}}" disabled="">
+                    </div>
+                    {% endif %}
+                    {% if myTracker.expires != null %}
+                    <div class="form-group">
+                      <label>Date d'expiration de la carte N°{{myTracker.giftCardId}}</label>
+                      <input type="text" class="form-control" value="{{myTracker.expires|date('d/m/Y H:i')}}" disabled="">
+                    </div>
+                    {% endif %}
+                    {% if myTracker.lastPaymentDate != null %}
+                    <div class="form-group">
+                      <label>Date du dernier paiement</label>
+                      <input type="text" class="form-control" value="{{myTracker.lastPaymentDate|date('d/m/Y H:i')}}" disabled="">
+                    </div>
+                    {% endif %}
                   </form>
                 </div>
                 <!-- /.tab-pane -->
