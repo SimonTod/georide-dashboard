@@ -23,7 +23,16 @@
           <div class="card card-primary card-outline">
             <div class="card-body box-profile">
               <div class="text-center">
-                <img class="profile-user-img img-fluid img-circle"
+                <img class="profile-user-img img-fluid img-circle
+                {% if myTracker.isLocked %}
+                  circle-red
+                {% elseif myTracker.isLocked == false %}
+                {% if myTracker.moving %}
+                  circle-green
+                {% else %}
+                  circle-orange
+                {% endif %}
+                {% endif %}"
                      src="/images/Logo-GeoRide.png"
                      alt="User profile picture">
               </div>
@@ -70,18 +79,22 @@
               {% endif %}
               <div class="text-center">
                 {% if myTracker.canLock %}
-                  {% if myTracker.isLocked == false  %}
-                    <a class="btn btn-app center" href="/dashboard/vehicules/{{myTracker.trackerId}}/lock">
-                      <i class="fa fa-lock"></i> Lock
-                    </a>
+                <a id="lockVehicule"
+                  {% if myTracker.isLocked  %}
+                    style='display:none;'
                   {% endif %}
+                  class="btn btn-app center" href="/dashboard/vehicules/{{myTracker.trackerId}}/lock?page=detail">
+                    <i class="fa fa-lock"></i> Lock
+                  </a>
                 {% endif %}
                 {% if myTracker.canUnlock %}
-                  {% if myTracker.isLocked %}
-                    <a  class="btn btn-app" href="/dashboard/vehicules/{{myTracker.trackerId}}/unlock">
-                      <i class="fa fa-unlock"></i> Unlock
-                    </a>
+                <a id="unlockVehicule"
+                  {% if myTracker.isLocked == false %}
+                     style='display:none;'
                   {% endif %}
+                  class="btn btn-app" href="/dashboard/vehicules/{{myTracker.trackerId}}/unlock?page=detail">
+                   <i class="fa fa-unlock"></i> Unlock
+                 </a>
                 {% endif %}
               </div>
             </div>
@@ -210,7 +223,7 @@
               fillOpacity: 0.35,
               map: map,
               center: marker.getPosition(),
-              radius: 200
+              radius: 100
             });
     }
     marker = {
@@ -249,8 +262,21 @@
   socket.on('lockedPosition', (data) => {
     removeMarker(marker)
     if (data.isLocked) {
+      $('#unlockVehicule').show()
+      $('#lockVehicule').hide()
+      $('.img-circle').removeClass('circle-green').removeClass('circle-orange').addClass('circle-red')
+      $('.profile-username').html("Verrouillé")
       addMarker(data.lockedLatitude,data.lockedLongitude,data.trackerName,data.isLocked)
     }else {
+      $('#unlockVehicule').hide()
+      $('#lockVehicule').show()
+      $('.profile-username').html("Déverrouillé")
+      $('.img-circle').removeClass('circle-red')
+      if (data.moving) {
+        $('.img-circle').addClass('circle-green')
+      }else {
+        $('.img-circle').addClass('circle-orange')
+      }
       addMarker(lastLat,lastLng,data.trackerName,data.isLocked)
     }
   })

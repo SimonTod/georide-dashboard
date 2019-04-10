@@ -122,13 +122,21 @@ module.exports = {
     var trakerId = req.params.id
 
     lock = await api.lock(user,trakerId)
-    res.redirect('/dashboard/vehicules')
+    if (req.query.page == 'detail') {
+      res.redirect('/dashboard/vehicules/'+trakerId)
+    }else {
+      res.redirect('/dashboard/vehicules')
+    }
   },
   unlock: async function(req, res){
     user = req.session.user
     var trakerId = req.params.id
 
     unlock = await api.unlock(user,trakerId)
-    res.redirect('/dashboard/vehicules')
+    if (req.query.page == 'detail') {
+      res.redirect('/dashboard/vehicules/'+trakerId)
+    }else {
+      res.redirect('/dashboard/vehicules')
+    }
   }
 }

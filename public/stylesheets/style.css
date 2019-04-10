@@ -1,8 +1,9 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.circle-red{
+  border-color: #f44336;
 }
-
-a {
-  color: #00B7FF;
+.circle-green{
+  border-color: #4caf50;
+}
+.circle-orange{
+  border-color: #ffc107;
 }
