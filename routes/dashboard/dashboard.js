@@ -27,12 +27,12 @@ module.exports = {
     var tempTime = moment.duration(user.tripsDuration);
     user.tripsDuration = tempTime.hours()
 
-    res.render('dashboard/home', { title: 'Dashboard - Home',link:"dashboard",sublink:"accueil",user,trackers });
+    res.render('dashboard/home', { title: 'Dashboard - Home',link:"dashboard",sublink:"dashboard",user,trackers });
   },
   profil: async function(req, res){
     user = req.session.user
 
-    res.render('dashboard/monCompte', { title: 'Dashboard - Home',link:"dashboard",sublink:"accueil",user });
+    res.render('dashboard/monCompte', { title: 'Dashboard - Home',link:"dashboard",sublink:"profil",user });
   },
   vehicules: async function(req, res){
     user = req.session.user
