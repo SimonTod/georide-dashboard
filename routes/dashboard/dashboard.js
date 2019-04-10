@@ -82,6 +82,7 @@ module.exports = {
     }
 
     myTracker.distance = myTracker.distance/1000
+    myTracker.speed = myTracker.speed*1.852
     myTracker.odometer = myTracker.odometer/1000
 
     var tempTime = moment.duration(myTracker.duration);

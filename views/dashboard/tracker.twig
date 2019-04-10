@@ -51,6 +51,14 @@
               {% if myTracker.canSeeStatistics %}
               <ul class="list-group list-group-unbordered mb-3">
                 <li class="list-group-item">
+                  <b>Vitesse</b><br>
+                  {% if myTracker.moving %}
+                    <a class="float-right">{{myTracker.speed|number_format(0, ',', ' ') }} km/h</a>
+                  {% else %}
+                    <a class="float-right">À l'arrêt</a>
+                  {% endif %}
+                </li>
+                <li class="list-group-item">
                   <b>Odometre</b><br>
                   <a class="float-right">{{myTracker.odometer|number_format(0, ',', ' ') }} km</a>
                 </li>
