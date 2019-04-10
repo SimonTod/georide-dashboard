@@ -88,13 +88,15 @@ module.exports = {
     var tempTime = moment.duration(myTracker.duration);
     myTracker.duration = tempTime.hours()
 
-    res.render('dashboard/tracker', { title: 'Dashboard - Home',link:"dashboard",sublink:myTracker.trackerName,myTracker,trips,user,trackerDistance });
+    res.render('dashboard/tracker', { title: 'Dashboard - Home',link:"dashboard",sublink:"vehicules",sublink2:myTracker.trackerName,myTracker,trips,user,trackerDistance });
   },
   trajet: async function(req, res){
     user = req.session.user
     var trakerId = req.params.id
     var from = req.params.from
     var to = req.params.to
+
+    myTracker = await api.getTrackerInfo(user,trakerId);
 
     trip = await api.getTrips(user,trakerId,from,to)
     trip = trip[0]
@@ -116,7 +118,7 @@ module.exports = {
     start = positions[0]
     end = positions[positions.length-1]
 
-    res.render('dashboard/trajet', { title: 'Dashboard - Home',link:"dashboard",sublink:"vehicules",positions,user,end,start,trip });
+    res.render('dashboard/trajet', { title: 'Dashboard - Home',link:"dashboard",sublink:"vehicules",sublink2:myTracker.trackerName,sublink3:start,positions,user,end,start,trip,trakerId });
   },
   lock: async function(req, res){
     user = req.session.user

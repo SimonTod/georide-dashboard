@@ -90,12 +90,29 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">{{sublink|capitalize}}</h1>
+            {% if sublink3 is defined %}
+              <h1 class="m-0 text-dark">{{sublink3.fixtime|date("d/m/Y")}} - {{sublink3.fixtime|date("H:i")}}</h1>
+            {% elseif sublink2 is defined %}
+              <h1 class="m-0 text-dark">{{sublink2|capitalize}}</h1>
+            {% else %}
+              <h1 class="m-0 text-dark">{{sublink|capitalize}}</h1>
+            {% endif %}
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="/dashboard">{{link|capitalize}}</a></li>
-              <li class="breadcrumb-item active">{{sublink|capitalize}}</li>
+              {% if sublink2 is defined %}
+                <li class="breadcrumb-item"><a href="/dashboard/vehicules">{{sublink|capitalize}}</a></li>
+                {% if sublink3 is defined %}
+                <li class="breadcrumb-item"><a href="/dashboard/vehicules/{{trakerId}}">{{sublink2|capitalize}}</a></li>
+                <li class="breadcrumb-item active">{{sublink3.fixtime|date("d/m/Y")}} - {{sublink3.fixtime|date("H:i")}}</li>
+                {% else %}
+                  <li class="breadcrumb-item active">{{sublink2|capitalize}}</li>
+                {% endif %}
+              {% else %}
+                <li class="breadcrumb-item active">{{sublink|capitalize}}</li>
+              {% endif %}
+
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
