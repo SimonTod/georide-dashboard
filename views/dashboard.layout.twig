@@ -218,8 +218,40 @@
 
   //event: tells you when a device trigger an alarm.
   socket.on('alarm', (alarm) => {
-  	console.log('Alarm')
-  	console.log(alarm)
+    switch (alarm.name) {
+      case 'vibration':
+        title = 'ALERTE 🚨 Vibration détéctée'
+        msg = alarm.trackerName+' à subit une vibration'
+        break;
+      case 'exitZone':
+        title = 'ALERTE 🚨 Sortie de zone'
+        msg = alarm.trackerName+' est sortie de sa zone de vérouillage'
+        break;
+      case 'crash':
+        title = 'ALERTE 🚨 Accident'
+        msg = alarm.trackerName+' à détécté un accident'
+        break;
+      case 'crashParking':
+        title = 'ALERTE 🚨 Chute parking'
+        msg = alarm.trackerName+" à chuté à l'arret"
+        break;
+      case 'deviceOffline':
+        title = '⚠️ Déconnexion du réseau'
+        msg = alarm.trackerName+" est déconnecté du réseau GeoRide"
+        break;
+      case 'deviceOnline':
+        title = '📡 Connexion au réseau'
+        msg = alarm.trackerName+" est connecté au réseau GeoRide"
+        break;
+      case 'powerCut':
+        title = 'ALERTE 🚨 Alimentation débranché'
+        msg = alarm.trackerName+" n'est plus allimenté par la batterie de la moto"
+        break;
+      default:
+
+    }
+    //data.trackerName
+    notification(title,msg,'/images/Logo-GeoRide.png',0)
   })
 
   //event: tells you when you need to refresh your list of trackers
@@ -232,8 +264,9 @@
   socket.on('lockedPosition', (data) => {
     console.log('LockedPosition');
     console.log(data);
-    msg = data.isLocked ? 'Verrouillé':'Déverrouillé'
-    notification(data.trackerName,msg,'/images/Logo-GeoRide.png',0)
+    title = data.isLocked ? '🔒 Verrouillé':'🔓 Déverrouillé'
+    msg = data.trackerName
+    notification(title,msg,'/images/Logo-GeoRide.png',0)
   })
 </script>
 <!-- Block Script -->
