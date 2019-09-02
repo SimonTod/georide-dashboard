@@ -1,147 +1,154 @@
 {% extends 'dashboard.layout.twig' %}
 {% block style %}
-<style>
-  /* Always set the map height explicitly to define the size of the div
+    <style>
+        /* Always set the map height explicitly to define the size of the div
    * element that contains the map. */
-  #map {
-    height: 425px;
-  }
-  /* Optional: Makes the sample page fill the window. */
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-</style>
+        #map {
+            height: 425px;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 {% endblock %}
 {% block body %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12">
-      <div class="mb-3" id="map"></div>
-    </div>
-  </div>
-  <!-- Small boxes (Stat box) -->
-  <div class="row">
-    <div class="col-lg-3 col-6">
-      <!-- small box -->
-      <div class="small-box bg-info">
-        <div class="inner">
-          <h3>{{trackers|length}}</h3>
-          <p>Véhicules</p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="mb-3" id="map"></div>
+            </div>
         </div>
-        <div class="icon">
-          <i class="ion ion-android-car"></i>
-        </div>
-      </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-6">
-      <!-- small box -->
-      <div class="small-box bg-info">
-        <div class="inner">
-          <h3>{{user.tripsCount}}</h3>
-          <p>Trajets</p>
-        </div>
-        <div class="icon">
-          <i class="fa fa-road" aria-hidden="true"></i>
-        </div>
-      </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-6">
-      <!-- small box -->
-      <div class="small-box bg-success">
-        <div class="inner">
-          <h3>{{user.tripsDistance|number_format(0, ',', ' ')}}<sup style="font-size: 20px">km</sup></h3>
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div
+                class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{trackers|length}}</h3>
+                        <p>Véhicules</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-android-car"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div
+                class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{user.tripsCount}}</h3>
+                        <p>Trajets</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-road" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div
+                class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{user.tripsDistance|number_format(0, ',', ' ')}}<sup style="font-size: 20px">km</sup>
+                        </h3>
 
-          <p>Distance totale</p>
+                        <p>Distance totale</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-speedometer"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div
+                class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{user.tripsDuration}}
+                            <sup style="font-size: 20px">heures</sup>
+                        </h3>
+
+                        <p>Durée totale</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-android-time"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- ./col -->
         </div>
-        <div class="icon">
-          <i class="ion ion-speedometer"></i>
+        <!-- /.row -->
+        <!-- Main row -->
+        <div
+            class="row">
+            <!-- Left col -->
+            <section class="col-lg-7 connectedSortable"></section>
+            <!-- /.Left col -->
+            <!-- right col (We are only adding the ID to make the widgets sortable)-->
+            <section class="col-lg-5 connectedSortable"></section>
+            <!-- right col -->
         </div>
-      </div>
+        <!-- /.row (main row) -->
     </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-6">
-      <!-- small box -->
-      <div class="small-box bg-warning">
-        <div class="inner">
-          <h3>{{user.tripsDuration}} <sup style="font-size: 20px">heures</sup></h3>
-
-          <p>Durée totale</p>
-        </div>
-        <div class="icon">
-          <i class="ion ion-android-time"></i>
-        </div>
-      </div>
-    </div>
-    <!-- ./col -->
-  </div>
-  <!-- /.row -->
-  <!-- Main row -->
-  <div class="row">
-    <!-- Left col -->
-    <section class="col-lg-7 connectedSortable">
-
-    </section>
-    <!-- /.Left col -->
-    <!-- right col (We are only adding the ID to make the widgets sortable)-->
-    <section class="col-lg-5 connectedSortable">
-
-    </section>
-    <!-- right col -->
-  </div>
-  <!-- /.row (main row) -->
-</div><!-- /.container-fluid -->
+    <!-- /.container-fluid -->
 {% endblock %}
 {% block script %}
-<script src="/lodash/lodash.js" charset="utf-8"></script>
-<script>
-  var map,markers=[];
+    <script src="/lodash/lodash.js" charset="utf-8"></script>
+    <script>
+        var map,
+            markers = [];
 
 
-  function addMarker(latitude,longitude,trackerName){
+        function addMarker(latitude, longitude, trackerName) {
 
-    let marker = new google.maps.Marker({
-      position: {lat:_.toNumber(latitude),lng:_.toNumber(longitude)},
-      map: map,
-      title: trackerName
-    });
-    var cityCircle = new google.maps.Circle({
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 0,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
-            map: map,
-            center: marker.getPosition(),
-            radius: 100
-          });
-    markers.push(marker);
-    return marker
-  }
-  function initMap() {
-    var zoneMarqueurs = new google.maps.LatLngBounds();
-    map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 48.8552236, lng: 2.3202793},
-      zoom: 12
-    });
+            let marker = new google.maps.Marker({
+                position: {
+                    lat: _.toNumber(latitude),
+                    lng: _.toNumber(longitude)
+                },
+                map: map,
+                title: trackerName
+            });
+            var cityCircle = new google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 0,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                map: map,
+                center: marker.getPosition(),
+                radius: 200
+            });
+            markers.push(marker);
+            return marker
+        }
+        function initMap() {
+            var zoneMarqueurs = new google.maps.LatLngBounds();
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {
+                    lat: 48.8552236,
+                    lng: 2.3202793
+                },
+                zoom: 12
+            });{% for tracker in trackers %}zoneMarqueurs.extend(addMarker('{{ tracker.latitude }}', '{{ tracker.longitude }}','{{ tracker.trackerName }}').getPosition());{% endfor %}map.fitBounds(zoneMarqueurs);
+            var listener = google.maps.event.addListener(map, "idle", function () {
+                if (map.getZoom() > 12) 
+                    map.setZoom(12);
+                
+                google.maps.event.removeListener(listener);
+            });
 
-    {% for tracker in trackers %}
-      {% if tracker.canSeePosition %}
-        zoneMarqueurs.extend(addMarker('{{tracker.latitude}}', '{{tracker.longitude}}','{{tracker.trackerName}}').getPosition() );
-      {% endif %}
-    {% endfor %}
-
-    map.fitBounds(zoneMarqueurs);
-    var listener = google.maps.event.addListener(map, "idle", function() {
-      if (map.getZoom() > 12) map.setZoom(12);
-      google.maps.event.removeListener(listener);
-    });
-
-  }
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClR6qsi7Vas_kzz3drLKNvd45OBmKs9oI&callback=initMap"
-async defer></script>
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClR6qsi7Vas_kzz3drLKNvd45OBmKs9oI&callback=initMap" async defer></script>
 {% endblock %}
+

@@ -130,7 +130,7 @@
                       <div class="user-block">
                         <img class="img-circle img-bordered-sm" src="/images/user1-128x128.jpg" alt="user image">
                         <span class="username">
-                          <a href="/dashboard/vehicules/{{myTracker.trackerId}}/{{trip.startTime}}/{{trip.endTime}}">{{trip.startTime|date("d/m/Y")}} - {{trip.startTime|date("H:i")}}</a>
+                          <a href="/dashboard/vehicules/{{myTracker.trackerId}}/{{trip.startTime}}/{{trip.endTime}}">{{trip.startTime|date("d/m/Y")}} - {{trip.startTime|date("H:i")}}</a> - {{trip.id}}
                         </span>
                         <span class="description">
                           {{trip.niceStartAddress}}
