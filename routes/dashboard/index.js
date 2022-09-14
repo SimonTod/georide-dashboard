@@ -16,6 +16,7 @@ router.get('/vehicules/:id', dashboard.traker);
 router.get('/vehicules/:id/lock', dashboard.lock);
 router.get('/vehicules/:id/unlock', dashboard.unlock);
 router.get('/vehicules/:id/:from/:to', dashboard.trajet);
+router.get('/vehicules/:id/trips/:tripid/share', dashboard.shareTrip);
 
 
 // Middleware to pass data to every RENDER

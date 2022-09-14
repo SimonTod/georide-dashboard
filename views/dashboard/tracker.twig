@@ -127,16 +127,21 @@
                   {% for trip in trips %}
                     <!-- Post -->
                     <div class="post">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="/images/user1-128x128.jpg" alt="user image">
-                        <span class="username">
-                          <a href="/dashboard/vehicules/{{myTracker.trackerId}}/{{trip.startTime}}/{{trip.endTime}}">{{trip.startTime|date("d/m/Y")}} - {{trip.startTime|date("H:i")}}</a> - {{trip.id}}
-                        </span>
-                        <span class="description">
-                          {{trip.niceStartAddress}}
-                           -
-                          {{trip.niceEndAddress}}
-                        </span>
+                      <div style="display: flex; justify-content: space-between;">
+                        <div class="user-block">
+                          <img class="img-circle img-bordered-sm" src="/images/user1-128x128.jpg" alt="user image">
+                          <span class="username">
+                            <a href="/dashboard/vehicules/{{myTracker.trackerId}}/{{trip.startTime}}/{{trip.endTime}}">{{trip.startTime|date("d/m/Y")}} - {{trip.startTime|date("H:i")}}</a> - {{trip.id}}
+                          </span>
+                          <span class="description">
+                            {{trip.niceStartAddress}}
+                            -
+                            {{trip.niceEndAddress}}
+                          </span>
+                        </div>
+                        {% if trip.id %}
+                          <a href="/dashboard/vehicules/{{myTracker.trackerId}}/trips/{{trip.id}}/share" class="btn btn-app btn-app-sm" target="_blank"><i class="fa fa-share-square"></i></a>
+                        {% endif %}
                       </div>
                       <!-- /.user-block -->
                       <p>

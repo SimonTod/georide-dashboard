@@ -141,5 +141,17 @@ module.exports = {
     }else {
       res.redirect('/dashboard/vehicules')
     }
+  },
+  shareTrip: async function(req, res){
+    user = req.session.user
+    var trackerId = req.params.id
+    var tripId = req.params.tripid
+  
+    try {
+      url = await api.createSharableTripLink(user, trackerId, tripId)
+      res.redirect(url);
+    } catch (error) {
+      res.redirect('/');
+    }
   }
 }

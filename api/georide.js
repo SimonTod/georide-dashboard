@@ -173,4 +173,18 @@ module.exports = {
     });
     return lock
   },
+  createSharableTripLink: async function(user,trackerId,tripId){
+    const headers = {
+      headers: {
+        'Authorization': 'Bearer '+user.authToken
+      }
+    }
+    return await axios.post(config.api_url+'/tracker/'+trackerId+'/share/trip',{trackerId:trackerId,tripId:tripId},headers)
+    .then(function (response) {
+      return response.data.url
+    })
+    .catch(function (error) {
+      throw new Error(error);
+    });
+  }
 }

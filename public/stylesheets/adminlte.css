@@ -11485,6 +11485,11 @@ label:not(.form-check-label):not(.custom-file-label) {
   font-size: 12px;
 }
 
+.btn-app-sm {
+  height: 30px;
+  padding: 5px 5px;
+}
+
 .btn-app > .fa,
 .btn-app > .glyphicon,
 .btn-app > .ion {
@@ -12408,6 +12413,7 @@ label:not(.form-check-label):not(.custom-file-label) {
 
 .post .user-block {
   margin-bottom: 15px;
+  display: block;
 }
 
 /*
