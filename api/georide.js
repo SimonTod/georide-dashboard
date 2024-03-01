@@ -3,6 +3,7 @@ const _ = require('lodash')
 const querystring = require('querystring');
 const config = require('../config')
 
+let cachedTrips = {};
 
 module.exports = {
   login: async function(email,password){
@@ -110,6 +111,10 @@ module.exports = {
     return myTracker
   },
   getTrips: async function(user,trakerId,from,to){
+    const cachedTripKey = `${user.id}_${trakerId}_${from}`;
+    if (Object.keys(cachedTrips).includes(cachedTripKey)) {
+      return cachedTrips[cachedTripKey];
+    }
     const headers =
     {
       headers: {
@@ -117,12 +122,18 @@ module.exports = {
       }
     }
     await axios.get(config.api_url+'/tracker/'+trakerId+'/trips?from='+from+'&to='+to,headers)
-    .then(function (response) {
-      trips = response.data
-    })
-    .catch(function (error) {
-      trips = 'KO'
-    });
+      .then(function (response) {
+        if (response.data === undefined) {
+          trips = [];
+        } else {
+          trips = response.data;
+          cachedTrips[cachedTripKey] = trips;
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+        trips = [];
+      });
     return trips
   },
   getPositions: async function(user,trakerId,from,to){

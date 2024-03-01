@@ -119,6 +119,7 @@
                 <li class="nav-item"><a class="nav-link " href="#activity" data-toggle="tab">Trajets</a></li>
                 <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Paramètres</a></li>
                 <li class="nav-item"><a class="nav-link" href="#abonnement" data-toggle="tab">Abonnement</a></li>
+                <li class="nav-item"><a class="nav-link" href="#averageTripDuration" data-toggle="tab">Temps trajet moyen</a></li>
               </ul>
             </div><!-- /.card-header -->
             <div class="card-body">
@@ -140,8 +141,8 @@
                       </div>
                       <!-- /.user-block -->
                       <p>
-                        De : {{trip.startAddress}}<br>
-                        À : {{trip.endAddress}}
+                        De : {{trip.startAddress}} - {{trip.niceStartAddress}} - {{trip.startLat}} - {{trip.startLon}}<br>
+                        À : {{trip.endAddress}} - {{trip.niceEndAddress}} -  {{trip.endLat}} - {{trip.endLon}}
                       </p>
                       <p>
                         <i class="fa fa-road" aria-hidden="true"></i> {{trip.distance|number_format(0, ',', ' ')}} km / <i class="fa fa-clock-o" aria-hidden="true"></i> {{trip.duration}} mins / <i class="ion ion-ios-stopwatch-outline"></i> {{trip.averageSpeed|number_format(0, ',', ' ')}} km/h / <i class="ion ion-speedometer"></i> {{trip.maxSpeed|number_format(0, ',', ' ')}} km/h
@@ -222,6 +223,36 @@
                   </form>
                 </div>
                 <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="averageTripDuration">
+                  <form>
+                    <button type="button" class="btn" id="averageTripDuration-invert">Inverser départ / arrivée</button>
+                    <div class="form-group">
+                      <label>Position départ</label>
+                      <div class="row">
+                        <div class="col-12">
+                          <input type="number" step="0.000001" class="form-control" name="startLat" placeholder="Latitude" required>
+                        </div>
+                        <div class="col-12">
+                          <input type="number" step="0.000001" class="form-control" name="startLon" placeholder="Longitude" required>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Position arrivée</label>
+                      <div class="row">
+                        <div class="col-12">
+                          <input type="number" step="0.000001" class="form-control" name="endLat" placeholder="Latitude" required>
+                        </div>
+                        <div class="col-12">
+                          <input type="number" step="0.000001" class="form-control" name="endLon" placeholder="Longitude" required>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="averageTripDuration-result"></div>
+                    <button type="submit" class="btn btn-success">Valider</button>
+                  </form>
+                </div>
               </div>
               <!-- /.tab-content -->
             </div><!-- /.card-body -->
@@ -311,7 +342,45 @@
       }
       addMarker(lastLat,lastLng,data.trackerName,data.isLocked)
     }
-  })
+  });
+
+  const getFormDataObject = (form) => {
+    const formData = new FormData(form);
+    let object = {};
+    formData.forEach(function(value, key) {
+        object[key] = value;
+    });
+    return object;
+  }
+
+  document.querySelector('button#averageTripDuration-invert').addEventListener('click', (e) => {
+    const form = document.querySelector('div#averageTripDuration form');
+    const data = getFormDataObject(form);
+
+    form.querySelector('input[name=startLat]').value = data.endLat;
+    form.querySelector('input[name=startLon]').value = data.endLon;
+    form.querySelector('input[name=endLat]').value = data.startLat;
+    form.querySelector('input[name=endLon]').value = data.startLon;
+  });
+  document.querySelector('div#averageTripDuration form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const json = JSON.stringify(getFormDataObject(form));
+    form.querySelectorAll('input, button').forEach(element => { element.disabled = true; });
+    const resultDiv = document.querySelector('div#averageTripDuration-result');
+    resultDiv.innerText = '';
+    const response = await fetch('/dashboard/vehicules/{{myTracker.trackerId}}/averageTripDuration', {
+      method: 'POST',
+      body: json,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    const result = await response.json();
+    resultDiv.innerText = result;
+    form.querySelectorAll('input, button').forEach(element => { element.disabled = false; });
+  });
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClR6qsi7Vas_kzz3drLKNvd45OBmKs9oI&callback=initMap"
 async defer></script>
